@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_common", "_common", "{B294207B-09FB-45DF-94F7-1D26FB0079FB}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.dockerignore = .dockerignore
+		.gitignore = .gitignore
+		docker-compose.yaml = docker-compose.yaml
+		README.md = README.md
+		LICENSE = LICENSE
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{521A0BE6-9BF8-4A96-8329-A132512E3385}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F84CC504-840E-4870-BA4B-DCB7B4DCE1BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObservabilityExample.GrpcService", "src\ObservabilityExample.GrpcService\ObservabilityExample.GrpcService.csproj", "{715704B9-733F-4475-8BE0-5700D1BBED24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObservabilityExample.HttpService", "src\ObservabilityExample.HttpService\ObservabilityExample.HttpService.csproj", "{EFF36EA9-3528-4D4E-8D21-27BF9E472A3B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{C4B980BD-75DB-4625-8744-5481A083DD4B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "prometheus", "prometheus", "{BB4A08DB-8362-47A9-9081-0B0AB9FD22C7}"
+	ProjectSection(SolutionItems) = preProject
+		configs\prometheus\prometheus.yml = configs\prometheus\prometheus.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{715704B9-733F-4475-8BE0-5700D1BBED24} = {521A0BE6-9BF8-4A96-8329-A132512E3385}
+		{EFF36EA9-3528-4D4E-8D21-27BF9E472A3B} = {521A0BE6-9BF8-4A96-8329-A132512E3385}
+		{BB4A08DB-8362-47A9-9081-0B0AB9FD22C7} = {C4B980BD-75DB-4625-8744-5481A083DD4B}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{715704B9-733F-4475-8BE0-5700D1BBED24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{715704B9-733F-4475-8BE0-5700D1BBED24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{715704B9-733F-4475-8BE0-5700D1BBED24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{715704B9-733F-4475-8BE0-5700D1BBED24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFF36EA9-3528-4D4E-8D21-27BF9E472A3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFF36EA9-3528-4D4E-8D21-27BF9E472A3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFF36EA9-3528-4D4E-8D21-27BF9E472A3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFF36EA9-3528-4D4E-8D21-27BF9E472A3B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

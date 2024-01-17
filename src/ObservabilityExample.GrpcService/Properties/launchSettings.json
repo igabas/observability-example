@@ -1,0 +1,17 @@
+﻿{
+  "profiles": {
+    "grpc": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:18091",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_HTTP_PORT": "18091",
+        "ASPNETCORE_GRPC_PORT": "18092",
+        "OTEL_COLLECTOR_ENDPOINT": "http://localhost:4317",
+        "APPLICATION_NAME": "grpc-service.local"
+      }
+    }
+  }
+}

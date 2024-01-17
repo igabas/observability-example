@@ -1,0 +1,114 @@
+# version: '3.9'
+version: '3'
+
+services:
+  # services
+  http-service:
+    build:
+      dockerfile: ./src/ObservabilityExample.HttpService/Dockerfile
+    container_name: http-service
+    ports:
+      - "8081:8080" # HTTP PORT
+    depends_on:
+      - grpc-service
+    networks:
+      - internal-network
+    environment:
+      GrpcServiceOptions__Address: "http://grpc-service:8084"
+    #depends_on:
+    #  postgres-db:
+    #    condition: service_healthy
+
+  grpc-service:
+    build:
+      dockerfile: ./src/ObservabilityExample.GrpcService/Dockerfile
+    container_name: grpc-service
+    ports:
+      - "8091:8080" # HTTP PORT
+      - "8092:8084" # GRPC PORT
+    networks:
+      - internal-network
+    environment:
+      ASPNETCORE_HTTP_PORT: 8080
+      ASPNETCORE_GRPC_PORT: 8084
+    #depends_on:
+    #  postgres-db:
+    #    condition: service_healthy
+
+  # infrastructure
+  #   store
+  #     postgres (see https://habr.com/ru/articles/578744/)
+  #  postgres:
+  #    image: "postgres:15-alpine"
+  #    environment:
+  #      #TZ: 'Europe/Moscow'
+  #      POSTGRES_USER: postgres
+  #      POSTGRES_PASSWORD: postgres
+  #      POSTGRES_DB: postgres
+  #    ports:
+  #      - "5432:5432"
+  #    #profiles:
+  #    #  - infra
+  #    #  - store
+  #    #  - all
+  #    volumes:
+  #      - postgres_data:/var/lib/postgresql/data
+  #    healthcheck:
+  #      test: ["CMD-SHELL", "pg_isready -U postgres"]
+  #      interval: 5s
+  #      timeout: 10s
+  #      retries: 3
+
+  #   monitoring
+  #     prometheus
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./configs/prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - "9090:9090"
+    networks:
+      - internal-network
+
+  #     grafana
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - internal-network
+
+  #     jaeger
+  jaeger:
+    image: jaegertracing/all-in-one:1.53
+    container_name: jaeger
+    ports:
+      - "16686:16686" # serve frontend
+      - "4317:4317"   # accept OpenTelemetry Protocol (OTLP) over gRPC
+    environment:
+      COLLECTOR_OTLP_ENABLED: true
+      JAEGER_DISABLED: true
+    networks:
+      - internal-network
+
+  #     graylog
+
+volumes:
+  postgres_data: { }
+  prometheus_data: { }
+  grafana_data: { }
+
+networks:
+  internal-network: { }
