@@ -1,0 +1,182 @@
+version: '3.9'
+name: observability-example
+
+services:
+  # Services
+  http-service:
+    build:
+      dockerfile: ./src/ObservabilityExample.HttpService/Dockerfile
+      args:
+        DOTNET_TAG: ${DOTNET_TAG}
+    container_name: http-service
+    hostname: http-service
+    environment:
+      GrpcServiceOptions__Address: "http://grpc-service:8084"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4317"
+    ports:
+      - "8081:8080" # HTTP PORT
+    networks:
+      - internal-network
+    depends_on:
+      - grpc-service
+
+
+  grpc-service:
+    build:
+      dockerfile: ./src/ObservabilityExample.GrpcService/Dockerfile
+      args:
+        DOTNET_TAG: ${DOTNET_TAG}
+    container_name: grpc-service
+    hostname: grpc-service
+    environment:
+      ASPNETCORE_HTTP_PORT: 8080
+      ASPNETCORE_GRPC_PORT: 8084
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4317"
+    ports:
+      - "8091:8080" # HTTP PORT
+      - "8092:8084" # GRPC PORT
+    networks:
+      - internal-network
+
+  # Infrastructure
+  postgres:
+    image: postgres:${POSTGRES_TAG}
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./configs/postgres/postgresql.conf:/etc/postgresql.conf:ro
+      - ./configs/postgres/scripts:/docker-entrypoint-initdb.d
+    command:
+      - "postgres"
+      - "-c"
+      - "config_file=/etc/postgresql.conf"
+    ports:
+      - "6432:5432"
+    networks:
+      - internal-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: '4G'
+
+  # Monitoring
+  # OpenTelemetry Collector
+  otel-collector:
+    image: otel/opentelemetry-collector:${OTEL_COLLECTOR_TAG}
+    container_name: otel-collector
+    restart: unless-stopped
+    volumes:
+      - ./configs/otlp-collector/otel-collector.yaml:/etc/otel-collector.yaml
+    command: [ "--config=/etc/otel-collector.yaml" ]
+    ports:
+      - "4317:4317"    # OTLP gRPC receiver
+      #- "4318:4318"   # OTLP http receiver
+      #- "8888:8888"   # Prometheus metrics exposed by the collector
+      - "8889:8889"    # Prometheus exporter metrics
+      #- "1888:1888"   # pprof extension
+      #- "13133:13133" # health_check extension
+      #- "55679:55679" # zpages extension
+    networks:
+      - internal-network
+    depends_on:
+      - jaeger
+
+  # Prometheus postgres exporter
+  postgres_exporter:
+    image: prometheuscommunity/postgres-exporter:${PG_EXPORTER_TAG}
+    container_name: postgres_exporter
+    restart: unless-stopped
+    environment:
+      DATA_SOURCE_URI: "postgres/example?sslmode=disable"
+      DATA_SOURCE_USER: "postgres"
+      DATA_SOURCE_PASS: "postgres"
+      PG_EXPORTER_EXTEND_QUERY_PATH: "/etc/postgres_exporter/additional-queries.yaml"
+      #PG_EXPORTER_EXCLUDE_DATABASES: "postgres,template0,template1" # DEPRECATED
+      #PG_EXPORTER_DISABLE_SETTINGS_METRICS: true
+    command:
+      # see https://github.com/prometheus-community/postgres_exporter?tab=readme-ov-file#flags
+      - "--collector.stat_activity_autovacuum"
+      - "--collector.statio_user_indexes"
+    volumes:
+      - ./configs/postgres-exporter/additional-queries.yaml:/etc/postgres_exporter/additional-queries.yaml:ro
+    ports:
+      - "9187:9187"
+    networks:
+      - internal-network
+    depends_on:
+      - postgres
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:${PROMETHEUS_TAG}
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./configs/prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - "9090:9090"
+    networks:
+      - internal-network
+    depends_on:
+      - otel-collector
+      - postgres_exporter
+
+  # Jaeger
+  jaeger:
+    image: jaegertracing/all-in-one:${JAEGER_TAG}
+    container_name: jaeger
+    restart: unless-stopped
+    environment:
+      COLLECTOR_OTLP_ENABLED: true
+      JAEGER_DISABLED: true
+    ports:
+      - "16686:16686"  # serve frontend
+      #- "4317:4317"   # accept OpenTelemetry Protocol (OTLP) over gRPC
+    networks:
+      - internal-network
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:${GRAFANA_TAG}
+    container_name: grafana
+    restart: unless-stopped
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./configs/grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=P@ssw0rd
+      - GF_USERS_ALLOW_SIGN_UP=false
+    ports:
+      - "3000:3000"
+    networks:
+      - internal-network
+    depends_on:
+      - prometheus
+
+volumes:
+  postgres_data: { }
+  prometheus_data: { }
+  grafana_data: { }
+
+networks:
+  internal-network: { }
