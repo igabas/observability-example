@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_common", "_common", "{B294207B-09FB-45DF-94F7-1D26FB0079FB}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{B294207B-09FB-45DF-94F7-1D26FB0079FB}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.dockerignore = .dockerignore

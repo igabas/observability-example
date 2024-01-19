@@ -7,6 +7,7 @@ services:
     build:
       dockerfile: ./src/ObservabilityExample.HttpService/Dockerfile
     container_name: http-service
+    #hostname: http-service.local
     ports:
       - "8081:8080" # HTTP PORT
     depends_on:
@@ -23,6 +24,7 @@ services:
     build:
       dockerfile: ./src/ObservabilityExample.GrpcService/Dockerfile
     container_name: grpc-service
+    #hostname: grpc-service.local
     ports:
       - "8091:8080" # HTTP PORT
       - "8092:8084" # GRPC PORT
