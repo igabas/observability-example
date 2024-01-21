@@ -30,9 +30,9 @@ scrape_configs:
   - job_name: 'http-service'
     scrape_interval: 3s
     static_configs:
-      - targets: [ 'http-service:8080' ]
+      - targets: [ 'http-service.local:8080' ]
 
   - job_name: 'grpc-service'
     scrape_interval: 3s
     static_configs:
-      - targets: [ 'grpc-service:8080' ]
+      - targets: [ 'grpc-service.local:8080' ]

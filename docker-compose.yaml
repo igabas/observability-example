@@ -7,7 +7,7 @@ services:
     build:
       dockerfile: ./src/ObservabilityExample.HttpService/Dockerfile
     container_name: http-service
-    #hostname: http-service.local
+    hostname: http-service.local
     ports:
       - "8081:8080" # HTTP PORT
     depends_on:
@@ -15,7 +15,7 @@ services:
     networks:
       - internal-network
     environment:
-      GrpcServiceOptions__Address: "http://grpc-service:8084"
+      GrpcServiceOptions__Address: "http://grpc-service.local:8084"
     #depends_on:
     #  postgres-db:
     #    condition: service_healthy
@@ -24,7 +24,7 @@ services:
     build:
       dockerfile: ./src/ObservabilityExample.GrpcService/Dockerfile
     container_name: grpc-service
-    #hostname: grpc-service.local
+    hostname: grpc-service.local
     ports:
       - "8091:8080" # HTTP PORT
       - "8092:8084" # GRPC PORT
@@ -64,8 +64,9 @@ services:
   #   monitoring
   #     prometheus
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:v2.49.1
     container_name: prometheus
+    restart: unless-stopped
     volumes:
       - ./configs/prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus
@@ -83,12 +84,18 @@ services:
   grafana:
     image: grafana/grafana
     container_name: grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=P@ssw0rd
+      - GF_USERS_ALLOW_SIGN_UP=false
     depends_on:
       - prometheus
     ports:
       - "3000:3000"
     volumes:
       - grafana_data:/var/lib/grafana
+      - ./configs/grafana/provisioning:/etc/grafana/provisioning
     networks:
       - internal-network
 
@@ -96,6 +103,7 @@ services:
   jaeger:
     image: jaegertracing/all-in-one:1.53
     container_name: jaeger
+    restart: unless-stopped
     ports:
       - "16686:16686" # serve frontend
       - "4317:4317"   # accept OpenTelemetry Protocol (OTLP) over gRPC
