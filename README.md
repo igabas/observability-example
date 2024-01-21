@@ -25,9 +25,8 @@ docker compose up -d
 * http-service http://localhost:8081
 * grpc-service http://localhost:8092 (grpc) и http://localhost:8091 (http)
 
- 
 
-Также можно импортировать полезные борды для Grafana
+По умолчанию в Grafana добавлены следующие dashboards:
 * https://grafana.com/grafana/dashboards/17706-asp-net-otel-metrics/
 * https://grafana.com/grafana/dashboards/19924-asp-net-core
 * https://grafana.com/grafana/dashboards/19925-asp-net-core-endpoint/
