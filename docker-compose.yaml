@@ -1,5 +1,4 @@
-# version: '3.9'
-version: '3'
+version: '3.9'
 
 services:
   # services
@@ -16,9 +15,6 @@ services:
       - internal-network
     environment:
       GrpcServiceOptions__Address: "http://grpc-service.local:8084"
-    #depends_on:
-    #  postgres-db:
-    #    condition: service_healthy
 
   grpc-service:
     build:
@@ -33,33 +29,7 @@ services:
     environment:
       ASPNETCORE_HTTP_PORT: 8080
       ASPNETCORE_GRPC_PORT: 8084
-    #depends_on:
-    #  postgres-db:
-    #    condition: service_healthy
 
-  # infrastructure
-  #   store
-  #     postgres (see https://habr.com/ru/articles/578744/)
-  #  postgres:
-  #    image: "postgres:15-alpine"
-  #    environment:
-  #      #TZ: 'Europe/Moscow'
-  #      POSTGRES_USER: postgres
-  #      POSTGRES_PASSWORD: postgres
-  #      POSTGRES_DB: postgres
-  #    ports:
-  #      - "5432:5432"
-  #    #profiles:
-  #    #  - infra
-  #    #  - store
-  #    #  - all
-  #    volumes:
-  #      - postgres_data:/var/lib/postgresql/data
-  #    healthcheck:
-  #      test: ["CMD-SHELL", "pg_isready -U postgres"]
-  #      interval: 5s
-  #      timeout: 10s
-  #      retries: 3
 
   #   monitoring
   #     prometheus
@@ -82,7 +52,7 @@ services:
 
   #     grafana
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:10.2.3
     container_name: grafana
     restart: unless-stopped
     environment:
@@ -112,8 +82,6 @@ services:
       JAEGER_DISABLED: true
     networks:
       - internal-network
-
-  #     graylog
 
 volumes:
   postgres_data: { }
