@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObservabilityExample.GrpcSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObservabilityExample.HttpService", "src\ObservabilityExample.HttpService\ObservabilityExample.HttpService.csproj", "{EFF36EA9-3528-4D4E-8D21-27BF9E472A3B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{C4B980BD-75DB-4625-8744-5481A083DD4B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "configs", "configs", "{C4B980BD-75DB-4625-8744-5481A083DD4B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "prometheus", "prometheus", "{BB4A08DB-8362-47A9-9081-0B0AB9FD22C7}"
 	ProjectSection(SolutionItems) = preProject
@@ -42,6 +42,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "datasources", "datasources"
 		configs\grafana\provisioning\datasources\datasource.yml = configs\grafana\provisioning\datasources\datasource.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "otlp-collector", "otlp-collector", "{BA89E750-520D-42A8-87BF-FABC9998DE6B}"
+	ProjectSection(SolutionItems) = preProject
+		configs\otlp-collector\otel-collector.yaml = configs\otlp-collector\otel-collector.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +60,7 @@ Global
 		{65848688-644C-4AC8-83B8-D622A1A3D7F1} = {0C2421B1-3568-4215-AE1F-8D266083A13D}
 		{5CA3FBB9-B63F-430C-B7C9-B65873CCD20A} = {65848688-644C-4AC8-83B8-D622A1A3D7F1}
 		{FB2C21CF-DC91-43CD-BA9B-C38577E728B5} = {65848688-644C-4AC8-83B8-D622A1A3D7F1}
+		{BA89E750-520D-42A8-87BF-FABC9998DE6B} = {C4B980BD-75DB-4625-8744-5481A083DD4B}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{715704B9-733F-4475-8BE0-5700D1BBED24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

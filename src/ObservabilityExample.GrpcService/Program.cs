@@ -6,7 +6,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
 
-var tracingBackendHost = Environment.GetEnvironmentVariable("OTEL_COLLECTOR_ENDPOINT") ?? "http://jaeger:4317";
+var otelExporterEndpoint = new Uri(Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT") !);
 var applicationName = Environment.GetEnvironmentVariable("APPLICATION_NAME") ?? "grpc-service";
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,13 +44,9 @@ builder.Services
     .WithTracing(b => b
         .AddSource(applicationName)
         .SetSampler(new AlwaysOnSampler())
-        .AddAspNetCoreInstrumentation(opt =>
-        {
-            // skip tracing metrics path
-            opt.Filter = context => !(context.Request.Path == "/metrics" && context.Request.Method == "GET");
-        })
-        //.AddGrpcCoreInstrumentation()
-        .AddOtlpExporter(o => { o.Endpoint = new Uri(tracingBackendHost); })
+        .AddAspNetCoreInstrumentation()
+        //.AddConsoleExporter()
+        .AddOtlpExporter(o => o.Endpoint = otelExporterEndpoint)
     )
     // add metrics
     .WithMetrics(b => b
@@ -58,7 +54,8 @@ builder.Services
         .AddAspNetCoreInstrumentation()
         .AddProcessInstrumentation()
         .AddRuntimeInstrumentation()
-        .AddPrometheusExporter()
+        //.AddConsoleExporter()
+        .AddOtlpExporter(o => o.Endpoint = otelExporterEndpoint)
     );
 
 // logging
@@ -77,8 +74,9 @@ builder.Logging
         options.IncludeScopes = true;
         options.ParseStateValues = true;
 
-        options.AddOtlpExporter(o => o.Endpoint = new Uri(tracingBackendHost));
         options.AttachLogsToActivityEvent();
+
+        options.AddOtlpExporter(o => o.Endpoint = otelExporterEndpoint);
     })
     .AddConsole();
 
@@ -87,6 +85,5 @@ var app = builder.Build();
 app.MapGrpcService<GreeterGrpcController>();
 // add grpc reflection
 app.MapGrpcReflectionService();
-app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
 app.Run();

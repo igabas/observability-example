@@ -3,7 +3,7 @@ using ObservabilityExample.HttpService.ExternalServices.Greeter;
 
 namespace ObservabilityExample.HttpService.Extensions;
 
-public static class ExternalService
+public static class ExternalServiceCollectionExtensions
 {
     public static IServiceCollection AddExternalServices(this IServiceCollection services, IConfiguration configuration)
     {
