@@ -11,7 +11,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_HTTP_PORT": "18081",
         "ASPNETCORE_GRPC_PORT": "18082",
-        "OTEL_COLLECTOR_ENDPOINT": "http://localhost:4317",
+        "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
         "APPLICATION_NAME": "http-service.local"
       }
     }

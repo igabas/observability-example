@@ -1,0 +1,52 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+
+
+exporters:
+  logging:
+    loglevel: debug
+
+  prometheus:
+    endpoint: 0.0.0.0:8889
+    #namespace: default
+    resource_to_telemetry_conversion:
+      enabled: true
+
+  #prometheusremotewrite:
+  #  endpoint: "http://prometheus"
+  #  resource_to_telemetry_conversion:
+  #    enabled: true
+
+  otlp:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
+
+
+processors:
+  batch:
+    # batch metrics before sending to reduce API usage
+    send_batch_max_size: 200
+    send_batch_size: 200
+    timeout: 5s
+
+
+service:
+  #extensions: [health_check, pprof, zpages]
+  pipelines:
+    traces:
+      receivers: [ otlp ]
+      #processors: [ batch ]
+      exporters: [ otlp ]
+
+    metrics:
+      receivers: [ otlp ]
+      #processors: [ batch ]
+      exporters: [ prometheus  ]
+
+    #logs:
+    #  receivers: [otlp]
+    #  processors: [batch]
+    #  exporters: [otlp]

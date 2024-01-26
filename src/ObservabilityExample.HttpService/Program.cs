@@ -5,7 +5,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-var tracingBackendHost = Environment.GetEnvironmentVariable("OTEL_COLLECTOR_ENDPOINT") ?? "http://jaeger:4317";
+var otelExporterEndpoint = new Uri(Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT") !);
 var applicationName = Environment.GetEnvironmentVariable("APPLICATION_NAME") ?? "http-service";
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,13 +32,9 @@ builder.Services
     .WithTracing(b => b
         .AddSource(applicationName)
         .SetSampler(new AlwaysOnSampler())
-        .AddAspNetCoreInstrumentation(opt =>
-        {
-            // skip tracing metrics path
-            opt.Filter = context => !(context.Request.Method.Equals("GET") && context.Request.Path == "/metrics");
-        })
-        //.AddGrpcClientInstrumentation()
-        .AddOtlpExporter(o => { o.Endpoint = new Uri(tracingBackendHost); })
+        .AddAspNetCoreInstrumentation()
+        //.AddConsoleExporter()
+        .AddOtlpExporter(o => o.Endpoint = otelExporterEndpoint)
     )
     // add metrics
     .WithMetrics(b => b
@@ -46,7 +42,8 @@ builder.Services
         .AddAspNetCoreInstrumentation()
         .AddProcessInstrumentation()
         .AddRuntimeInstrumentation()
-        .AddPrometheusExporter()
+        //.AddConsoleExporter()
+        .AddOtlpExporter(o => o.Endpoint = otelExporterEndpoint)
     );
 
 // logging
@@ -59,13 +56,15 @@ builder.Logging
                 applicationName,
                 serviceVersion :ObservationService.ApplicationVersion);
 
+        options.SetResourceBuilder(rb);
+
         options.IncludeFormattedMessage = true;
         options.IncludeScopes = true;
         options.ParseStateValues = true;
 
-        options.SetResourceBuilder(rb);
-        options.AddOtlpExporter(o => o.Endpoint = new Uri(tracingBackendHost));
         options.AttachLogsToActivityEvent();
+
+        options.AddOtlpExporter(o => o.Endpoint = otelExporterEndpoint);
     })
     .AddConsole();
 
@@ -76,7 +75,5 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.MapControllers();
-
-app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
 app.Run();
