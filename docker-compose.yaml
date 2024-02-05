@@ -1,14 +1,15 @@
 version: '3.9'
+name: otel-otel
 
 services:
-  # services
+  # Services
   http-service:
     build:
       dockerfile: ./src/ObservabilityExample.HttpService/Dockerfile
     container_name: http-service
-    hostname: http-service.local
+    hostname: http-service
     environment:
-      GrpcServiceOptions__Address: "http://grpc-service.local:8084"
+      GrpcServiceOptions__Address: "http://grpc-service:8084"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4317"
     ports:
       - "8081:8080" # HTTP PORT
@@ -21,7 +22,7 @@ services:
     build:
       dockerfile: ./src/ObservabilityExample.GrpcService/Dockerfile
     container_name: grpc-service
-    hostname: grpc-service.local
+    hostname: grpc-service
     environment:
       ASPNETCORE_HTTP_PORT: 8080
       ASPNETCORE_GRPC_PORT: 8084

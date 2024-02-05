@@ -35,6 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dashboards", "dashboards", 
 		configs\grafana\provisioning\dashboards\asp-net-core-endpoints.json = configs\grafana\provisioning\dashboards\asp-net-core-endpoints.json
 		configs\grafana\provisioning\dashboards\asp-net-core-otel-metrics.json = configs\grafana\provisioning\dashboards\asp-net-core-otel-metrics.json
 		configs\grafana\provisioning\dashboards\asp-net-core.json = configs\grafana\provisioning\dashboards\asp-net-core.json
+		configs\grafana\provisioning\dashboards\asp-net-core-service-overview.json = configs\grafana\provisioning\dashboards\asp-net-core-service-overview.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "datasources", "datasources", "{FB2C21CF-DC91-43CD-BA9B-C38577E728B5}"
