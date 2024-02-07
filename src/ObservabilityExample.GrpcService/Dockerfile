@@ -1,9 +1,11 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+﻿ARG DOTNET_TAG=8.0
+
+FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_TAG} AS base
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8084
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_TAG} AS build
 WORKDIR /src
 COPY ["src/ObservabilityExample.GrpcService/ObservabilityExample.GrpcService.csproj", "src/ObservabilityExample.GrpcService/"]
 RUN dotnet restore "src/ObservabilityExample.GrpcService/ObservabilityExample.GrpcService.csproj"

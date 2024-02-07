@@ -29,3 +29,16 @@ docker compose up -d
 * Jaeger http://localhost:16686/
 * Prometheus http://localhost:9090/
 * Grafana http://localhost:3000/ (user: `admin`, password: `P@ssw0rd`)
+
+## Troubleshooting
+
+On MacOS while executing init scripts happens error:
+
+> /usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-initdb.d/0001-init.sh\
+> /usr/local/bin/docker-entrypoint.sh: /docker-entrypoint-initdb.d/0001-init.sh: /bin/bash: bad interpreter: Permission denied
+
+For fix this needs to add execute permission for scripts:
+
+```shell
+find ./configs/postgres/scripts -type f \( -iname \*.sh -o -iname \*.sql \) -exec chmod +x {} +
+```

@@ -6,6 +6,8 @@ services:
   http-service:
     build:
       dockerfile: ./src/ObservabilityExample.HttpService/Dockerfile
+      args:
+        DOTNET_TAG: ${DOTNET_TAG}
     container_name: http-service
     hostname: http-service
     environment:
@@ -21,6 +23,8 @@ services:
   grpc-service:
     build:
       dockerfile: ./src/ObservabilityExample.GrpcService/Dockerfile
+      args:
+        DOTNET_TAG: ${DOTNET_TAG}
     container_name: grpc-service
     hostname: grpc-service
     environment:
@@ -33,10 +37,44 @@ services:
     networks:
       - internal-network
 
+  # Infrastructure
+  postgres:
+    image: postgres:${POSTGRES_TAG}
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./configs/postgres/postgresql.conf:/etc/postgresql.conf:ro
+      - ./configs/postgres/scripts:/docker-entrypoint-initdb.d
+    command:
+      - "postgres"
+      - "-c"
+      - "config_file=/etc/postgresql.conf"
+    ports:
+      - "6432:5432"
+    networks:
+      - internal-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: 2
+          memory: 4G
+
   # Monitoring
   # OpenTelemetry Collector
   otel-collector:
-    image: otel/opentelemetry-collector:0.92.0
+    image: otel/opentelemetry-collector:${OTEL_COLLECTOR_TAG}
     container_name: otel-collector
     restart: unless-stopped
     volumes:
@@ -55,9 +93,37 @@ services:
     depends_on:
       - jaeger
 
+  # Prometheus postgres exporter
+  postgres_exporter:
+    image: prometheuscommunity/postgres-exporter:${PG_EXPORTER_TAG}
+    container_name: postgres_exporter
+    restart: unless-stopped
+    environment:
+      # DATA_SOURCE_NAME="postgresql://postgres:password@localhost:5432/postgres?sslmode=disable"
+      DATA_SOURCE_URI: "postgres?sslmode=disable"
+      DATA_SOURCE_USER: "postgres"
+      DATA_SOURCE_PASS: "postgres"
+      PG_EXPORTER_EXTEND_QUERY_PATH: "/etc/postgres_exporter/additional-queries.yaml"
+    #command:
+      # see https://github.com/prometheus-community/postgres_exporter?tab=readme-ov-file#flags
+      #- "collector.database_wraparound=enabled"
+      #- "collector.long_running_transactions=enabled"
+      #- "collector.stat_activity_autovacuum=enabled"
+      #- "collector.stat_statements=enabled"
+      #- "collector.statio_user_indexes=enabled"
+      #- "auto-discover-databases=true"
+    volumes:
+      - ./configs/postgres-exporter/additional-queries.yaml:/etc/postgres_exporter/additional-queries.yaml:ro
+    ports:
+      - "9187:9187"
+    networks:
+      - internal-network
+    depends_on:
+      - postgres
+
   # Prometheus
   prometheus:
-    image: prom/prometheus:v2.49.1
+    image: prom/prometheus:${PROMETHEUS_TAG}
     container_name: prometheus
     restart: unless-stopped
     volumes:
@@ -74,10 +140,11 @@ services:
       - internal-network
     depends_on:
       - otel-collector
+      - postgres_exporter
 
   # Jaeger
   jaeger:
-    image: jaegertracing/all-in-one:1.53
+    image: jaegertracing/all-in-one:${JAEGER_TAG}
     container_name: jaeger
     restart: unless-stopped
     environment:
@@ -91,7 +158,7 @@ services:
 
   # Grafana
   grafana:
-    image: grafana/grafana:10.2.3
+    image: grafana/grafana:${GRAFANA_TAG}
     container_name: grafana
     restart: unless-stopped
     volumes:
@@ -105,6 +172,8 @@ services:
       - "3000:3000"
     networks:
       - internal-network
+    depends_on:
+      - prometheus
 
 volumes:
   postgres_data: { }

@@ -8,11 +8,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{B29420
 		docker-compose.yaml = docker-compose.yaml
 		README.md = README.md
 		LICENSE = LICENSE
+		.env = .env
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{521A0BE6-9BF8-4A96-8329-A132512E3385}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F84CC504-840E-4870-BA4B-DCB7B4DCE1BF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObservabilityExample.GrpcService", "src\ObservabilityExample.GrpcService\ObservabilityExample.GrpcService.csproj", "{715704B9-733F-4475-8BE0-5700D1BBED24}"
 EndProject
@@ -45,6 +44,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "otlp-collector", "otlp-coll
 		configs\otlp-collector\otel-collector.yaml = configs\otlp-collector\otel-collector.yaml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "postgres", "postgres", "{8ED13754-73C9-4847-830E-3FF2AF716987}"
+	ProjectSection(SolutionItems) = preProject
+		configs\postgres\postgresql.conf = configs\postgres\postgresql.conf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{8874EEA0-3EC9-44BA-802D-53AE7B26E7F6}"
+	ProjectSection(SolutionItems) = preProject
+		configs\postgres\scripts\0001-add-extensions-to-template-db.sh = configs\postgres\scripts\0001-add-extensions-to-template-db.sh
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "postgres-exporter", "postgres-exporter", "{4F400417-4EAE-4FCF-89E9-520376E314F1}"
+	ProjectSection(SolutionItems) = preProject
+		configs\postgres-exporter\additional-queries.yaml = configs\postgres-exporter\additional-queries.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +73,9 @@ Global
 		{5CA3FBB9-B63F-430C-B7C9-B65873CCD20A} = {65848688-644C-4AC8-83B8-D622A1A3D7F1}
 		{FB2C21CF-DC91-43CD-BA9B-C38577E728B5} = {65848688-644C-4AC8-83B8-D622A1A3D7F1}
 		{BA89E750-520D-42A8-87BF-FABC9998DE6B} = {C4B980BD-75DB-4625-8744-5481A083DD4B}
+		{8ED13754-73C9-4847-830E-3FF2AF716987} = {C4B980BD-75DB-4625-8744-5481A083DD4B}
+		{8874EEA0-3EC9-44BA-802D-53AE7B26E7F6} = {8ED13754-73C9-4847-830E-3FF2AF716987}
+		{4F400417-4EAE-4FCF-89E9-520376E314F1} = {C4B980BD-75DB-4625-8744-5481A083DD4B}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{715704B9-733F-4475-8BE0-5700D1BBED24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
