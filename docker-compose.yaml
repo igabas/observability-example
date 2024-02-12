@@ -68,8 +68,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2
-          memory: 4G
+          cpus: '2'
+          memory: '4G'
 
   # Monitoring
   # OpenTelemetry Collector
@@ -99,19 +99,16 @@ services:
     container_name: postgres_exporter
     restart: unless-stopped
     environment:
-      # DATA_SOURCE_NAME="postgresql://postgres:password@localhost:5432/postgres?sslmode=disable"
-      DATA_SOURCE_URI: "postgres?sslmode=disable"
+      DATA_SOURCE_URI: "postgres/example?sslmode=disable"
       DATA_SOURCE_USER: "postgres"
       DATA_SOURCE_PASS: "postgres"
       PG_EXPORTER_EXTEND_QUERY_PATH: "/etc/postgres_exporter/additional-queries.yaml"
-    #command:
+      #PG_EXPORTER_EXCLUDE_DATABASES: "postgres,template0,template1" # DEPRECATED
+      #PG_EXPORTER_DISABLE_SETTINGS_METRICS: true
+    command:
       # see https://github.com/prometheus-community/postgres_exporter?tab=readme-ov-file#flags
-      #- "collector.database_wraparound=enabled"
-      #- "collector.long_running_transactions=enabled"
-      #- "collector.stat_activity_autovacuum=enabled"
-      #- "collector.stat_statements=enabled"
-      #- "collector.statio_user_indexes=enabled"
-      #- "auto-discover-databases=true"
+      - "--collector.stat_activity_autovacuum"
+      - "--collector.statio_user_indexes"
     volumes:
       - ./configs/postgres-exporter/additional-queries.yaml:/etc/postgres_exporter/additional-queries.yaml:ro
     ports:
