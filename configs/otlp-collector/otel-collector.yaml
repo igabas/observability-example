@@ -14,11 +14,6 @@ exporters:
     resource_to_telemetry_conversion:
       enabled: true
 
-  #prometheusremotewrite:
-  #  endpoint: "http://prometheus"
-  #  resource_to_telemetry_conversion:
-  #    enabled: true
-
   otlp:
     endpoint: jaeger:4317
     tls:
@@ -38,12 +33,12 @@ service:
   pipelines:
     traces:
       receivers: [ otlp ]
-      #processors: [ batch ]
+      processors: [ batch ]
       exporters: [ otlp ]
 
     metrics:
       receivers: [ otlp ]
-      #processors: [ batch ]
+      processors: [ batch ]
       exporters: [ prometheus  ]
 
     #logs:
