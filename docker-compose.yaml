@@ -20,6 +20,7 @@ services:
     depends_on:
       - grpc-service
 
+
   grpc-service:
     build:
       dockerfile: ./src/ObservabilityExample.GrpcService/Dockerfile
