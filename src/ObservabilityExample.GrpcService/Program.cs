@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Npgsql;
+using ObservabilityExample.GrpcService.DataAccess;
 using ObservabilityExample.GrpcService.GrpcControllers;
 using ObservabilityExample.GrpcService.Services;
 using OpenTelemetry.Logs;
@@ -33,6 +35,10 @@ builder.WebHost.ConfigureKestrel((_, options) =>
 builder.Services.AddGrpc(opt => { opt.EnableDetailedErrors = true; });
 builder.Services.AddGrpcReflection();
 
+builder.Services.AddTransient<IConnectionFactory, PostgresConnectionFactory>(sp =>
+    new PostgresConnectionFactory(builder.Configuration.GetConnectionString("PgDb")!)
+);
+
 builder.Services.AddSingleton(new ObservationService(applicationName));
 
 // add tracing
@@ -44,6 +50,7 @@ builder.Services
     .WithTracing(b => b
         .AddSource(applicationName)
         .SetSampler(new AlwaysOnSampler())
+        .AddNpgsql()
         .AddAspNetCoreInstrumentation()
         //.AddConsoleExporter()
         .AddOtlpExporter(o => o.Endpoint = otelExporterEndpoint)

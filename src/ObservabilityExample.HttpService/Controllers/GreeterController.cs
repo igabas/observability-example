@@ -19,7 +19,7 @@ public class GreeterController(
         using var activity =
             observationService.ActivitySource.StartActivity($"{nameof(GreeterController)}.{nameof(GreetMeAsync)}");
 
-        activity?.SetTag(nameof(name), name);
+        activity?.SetTag("name", name);
 
         logger.LogInformation(
             "Starting execute method '{Method}' of '{Service}' controller ...",
