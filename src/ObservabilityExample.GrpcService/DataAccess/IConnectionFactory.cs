@@ -10,17 +10,17 @@ public interface IConnectionFactory
 
 public class PostgresConnectionFactory : IConnectionFactory
 {
-    private readonly string _connectionString;
+    private readonly NpgsqlDataSource _dataSource;
 
-    public PostgresConnectionFactory(string connectionString)
+    public PostgresConnectionFactory(NpgsqlDataSource dataSource)
     {
-        _connectionString = !string.IsNullOrEmpty(connectionString)
-            ? connectionString
-            : throw new ArgumentNullException(nameof(connectionString));
+        _dataSource = dataSource;
     }
+
 
     public Task<DbConnection> CreateConnection(CancellationToken token)
     {
-        return Task.FromResult<DbConnection>(new NpgsqlConnection(_connectionString));
+        var connection = _dataSource.CreateConnection();
+        return Task.FromResult<DbConnection>(connection);
     }
 }

@@ -35,9 +35,13 @@ builder.WebHost.ConfigureKestrel((_, options) =>
 builder.Services.AddGrpc(opt => { opt.EnableDetailedErrors = true; });
 builder.Services.AddGrpcReflection();
 
-builder.Services.AddTransient<IConnectionFactory, PostgresConnectionFactory>(sp =>
-    new PostgresConnectionFactory(builder.Configuration.GetConnectionString("PgDb")!)
-);
+builder.Services.AddNpgsqlDataSource(builder.Configuration.GetConnectionString("Example")!, op =>
+{
+    op.Name = "Example";
+    // todo register mappings types/enum
+});
+
+builder.Services.AddTransient<IConnectionFactory, PostgresConnectionFactory>();
 
 builder.Services.AddSingleton(new ObservationService(applicationName));
 
@@ -45,12 +49,12 @@ builder.Services.AddSingleton(new ObservationService(applicationName));
 builder.Services
     .AddOpenTelemetry()
     .ConfigureResource(o =>
-        o.AddService(applicationName, serviceVersion :ObservationService.ApplicationVersion)
+        o.AddService(applicationName, serviceVersion: ObservationService.ApplicationVersion)
     )
     .WithTracing(b => b
         .AddSource(applicationName)
         .SetSampler(new AlwaysOnSampler())
-        .AddNpgsql()
+        .AddNpgsql(o => { })
         .AddAspNetCoreInstrumentation()
         //.AddConsoleExporter()
         .AddOtlpExporter(o => o.Endpoint = otelExporterEndpoint)
@@ -61,6 +65,7 @@ builder.Services
         .AddAspNetCoreInstrumentation()
         .AddProcessInstrumentation()
         .AddRuntimeInstrumentation()
+        .AddMeter("Npgsql")
         //.AddConsoleExporter()
         .AddOtlpExporter(o => o.Endpoint = otelExporterEndpoint)
     );
@@ -73,7 +78,7 @@ builder.Logging
         var rb = ResourceBuilder.CreateDefault()
             .AddService(
                 applicationName,
-                serviceVersion :ObservationService.ApplicationVersion);
+                serviceVersion: ObservationService.ApplicationVersion);
 
         options.SetResourceBuilder(rb);
 
