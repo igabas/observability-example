@@ -39,40 +39,6 @@ services:
       - internal-network
 
   # Infrastructure
-  postgres:
-    image: postgres:${POSTGRES_TAG}
-    container_name: postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      PGDATA: "/var/lib/postgresql/data/pgdata"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./configs/postgres/postgresql.conf:/etc/postgresql.conf:ro
-      - ./configs/postgres/scripts:/docker-entrypoint-initdb.d
-    command:
-      - "postgres"
-      - "-c"
-      - "config_file=/etc/postgresql.conf"
-    ports:
-      - "6432:5432"
-    networks:
-      - internal-network
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-          memory: '4G'
-
-  # Monitoring
   # OpenTelemetry Collector
   otel-collector:
     image: otel/opentelemetry-collector:${OTEL_COLLECTOR_TAG}
@@ -94,18 +60,48 @@ services:
     depends_on:
       - jaeger
 
+  postgres:
+    image: postgres:${POSTGRES_TAG}
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${PG_ROOT_USER_NAME}
+      POSTGRES_PASSWORD: ${PG_ROOT_USER_PWD}
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./configs/postgres/postgresql.conf:/etc/postgresql.conf:ro
+      - ./configs/postgres/scripts:/docker-entrypoint-initdb.d
+    command:
+      - "postgres"
+      - "-c"
+      - "config_file=/etc/postgresql.conf"
+    ports:
+      - "${PG_EXT_PORT}:5432"
+    networks:
+      - internal-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: '4G'
+
   # Prometheus postgres exporter
-  postgres_exporter:
+  postgres-exporter:
     image: prometheuscommunity/postgres-exporter:${PG_EXPORTER_TAG}
-    container_name: postgres_exporter
+    container_name: postgres-exporter
     restart: unless-stopped
     environment:
       DATA_SOURCE_URI: "postgres/example?sslmode=disable"
-      DATA_SOURCE_USER: "postgres"
-      DATA_SOURCE_PASS: "postgres"
+      DATA_SOURCE_USER: ${PG_ROOT_USER_NAME}
+      DATA_SOURCE_PASS: ${PG_ROOT_USER_PWD}
       PG_EXPORTER_EXTEND_QUERY_PATH: "/etc/postgres_exporter/additional-queries.yaml"
-      #PG_EXPORTER_EXCLUDE_DATABASES: "postgres,template0,template1" # DEPRECATED
-      #PG_EXPORTER_DISABLE_SETTINGS_METRICS: true
     command:
       # see https://github.com/prometheus-community/postgres_exporter?tab=readme-ov-file#flags
       - "--collector.stat_activity_autovacuum"
@@ -150,7 +146,6 @@ services:
       JAEGER_DISABLED: true
     ports:
       - "16686:16686"  # serve frontend
-      #- "4317:4317"   # accept OpenTelemetry Protocol (OTLP) over gRPC
     networks:
       - internal-network
 
@@ -163,8 +158,8 @@ services:
       - grafana_data:/var/lib/grafana
       - ./configs/grafana/provisioning:/etc/grafana/provisioning
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=P@ssw0rd
+      - GF_SECURITY_ADMIN_USER=${GR_USER_NAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GR_USER_PWD}
       - GF_USERS_ALLOW_SIGN_UP=false
     ports:
       - "3000:3000"
