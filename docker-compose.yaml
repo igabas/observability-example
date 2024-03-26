@@ -134,7 +134,7 @@ services:
       - internal-network
     depends_on:
       - otel-collector
-      - postgres_exporter
+      - postgres-exporter
 
   # Jaeger
   jaeger:

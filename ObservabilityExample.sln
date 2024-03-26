@@ -9,6 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{B29420
 		README.md = README.md
 		LICENSE = LICENSE
 		.env = .env
+		global.json = global.json
+		Directory.Packages.props = Directory.Packages.props
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{521A0BE6-9BF8-4A96-8329-A132512E3385}"
