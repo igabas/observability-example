@@ -8,10 +8,10 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
 
-var otelExporterEndpoint = new Uri(Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT") !);
 var applicationName = Environment.GetEnvironmentVariable("APPLICATION_NAME") ?? "grpc-service";
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 // Add services to the container.
 builder.WebHost.ConfigureKestrel((_, options) =>
@@ -37,7 +37,7 @@ builder.Services.AddGrpcReflection();
 
 builder.Services.AddNpgsqlDataSource(builder.Configuration.GetConnectionString("Example")!, op =>
 {
-    op.Name = "Example";
+    op.Name = "ExampleDb";
     // todo register mappings types/enum
 });
 
@@ -57,7 +57,7 @@ builder.Services
         .AddNpgsql(o => { })
         .AddAspNetCoreInstrumentation()
         //.AddConsoleExporter()
-        .AddOtlpExporter(o => o.Endpoint = otelExporterEndpoint)
+        .AddOtlpExporter()
     )
     // add metrics
     .WithMetrics(b => b
@@ -67,7 +67,7 @@ builder.Services
         .AddRuntimeInstrumentation()
         .AddMeter("Npgsql")
         //.AddConsoleExporter()
-        .AddOtlpExporter(o => o.Endpoint = otelExporterEndpoint)
+        .AddOtlpExporter()
     );
 
 // logging
@@ -88,7 +88,7 @@ builder.Logging
 
         options.AttachLogsToActivityEvent();
 
-        options.AddOtlpExporter(o => o.Endpoint = otelExporterEndpoint);
+        options.AddOtlpExporter();
     })
     .AddConsole();
 

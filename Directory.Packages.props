@@ -4,29 +4,32 @@
     <EnablePackageVersionOverride>false</EnablePackageVersionOverride>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.3" />
-    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.7.0" />
-    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageVersion Include="Google.Protobuf" Version="3.26.0" />
-    <PackageVersion Include="Grpc.AspNetCore" Version="2.61.0" />
-    <PackageVersion Include="Grpc.AspNetCore.Server.Reflection" Version="2.61.0" />
-    <PackageVersion Include="Grpc.AspNetCore.Server.ClientFactory" Version="2.61.0" />
-    <PackageVersion Include="Grpc.Net.Client" Version="2.61.0" />
-    <PackageVersion Include="Grpc.Net.ClientFactory" Version="2.61.0" />
+    <!-- API -->
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.3"/>
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+    <!-- GRPC -->
+    <PackageVersion Include="Google.Protobuf" Version="3.26.0"/>
+    <PackageVersion Include="Grpc.AspNetCore" Version="2.61.0"/>
+    <PackageVersion Include="Grpc.AspNetCore.Server.Reflection" Version="2.61.0"/>
+    <PackageVersion Include="Grpc.AspNetCore.Server.ClientFactory" Version="2.61.0"/>
+    <PackageVersion Include="Grpc.Net.Client" Version="2.61.0"/>
+    <PackageVersion Include="Grpc.Net.ClientFactory" Version="2.61.0"/>
     <PackageVersion Include="Grpc.Tools" Version="2.62.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
-    <PackageVersion Include="Dapper" Version="2.1.35" />
-    <PackageVersion Include="Npgsql" Version="8.0.2" />
-    <PackageVersion Include="Npgsql.OpenTelemetry" Version="8.0.2" />
-    <PackageVersion Include="OpenTelemetry.Extensions" Version="1.0.0-beta.4" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.7.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.7.1" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.7.1" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Process" Version="0.5.0-beta.4" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.7.0" />
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.7.0" />
+    <!-- Data -->
+    <PackageVersion Include="Dapper" Version="2.1.35"/>
+    <PackageVersion Include="Npgsql.OpenTelemetry" Version="8.0.2"/>
+    <PackageVersion Include="Npgsql.DependencyInjection" Version="8.0.2"/>
+    <!-- OpenTelemetry -->
+    <PackageVersion Include="OpenTelemetry.Extensions" Version="1.0.0-beta.4"/>
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.7.0"/>
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.7.1"/>
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.7.1"/>
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Process" Version="0.5.0-beta.4"/>
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.7.0"/>
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.7.0"/>
     <!--<PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.7.0"/>-->
   </ItemGroup>
 </Project>

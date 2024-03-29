@@ -20,7 +20,6 @@ services:
     depends_on:
       - grpc-service
 
-
   grpc-service:
     build:
       dockerfile: ./src/ObservabilityExample.GrpcService/Dockerfile
@@ -32,6 +31,8 @@ services:
       ASPNETCORE_HTTP_PORT: 8080
       ASPNETCORE_GRPC_PORT: 8084
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4317"
+      # todo from secrets or vault
+      ConnectionStrings__Example: "Host=postgres;Port=5432;Database=example;Username=example;Password=example"
     ports:
       - "8091:8080" # HTTP PORT
       - "8092:8084" # GRPC PORT
@@ -39,29 +40,8 @@ services:
       - internal-network
 
   # Infrastructure
-  # OpenTelemetry Collector
-  otel-collector:
-    image: otel/opentelemetry-collector:${OTEL_COLLECTOR_TAG}
-    container_name: otel-collector
-    restart: unless-stopped
-    volumes:
-      - ./configs/otlp-collector/otel-collector.yaml:/etc/otel-collector.yaml
-    command: [ "--config=/etc/otel-collector.yaml" ]
-    ports:
-      - "4317:4317"    # OTLP gRPC receiver
-      #- "4318:4318"   # OTLP http receiver
-      #- "8888:8888"   # Prometheus metrics exposed by the collector
-      - "8889:8889"    # Prometheus exporter metrics
-      #- "1888:1888"   # pprof extension
-      #- "13133:13133" # health_check extension
-      #- "55679:55679" # zpages extension
-    networks:
-      - internal-network
-    depends_on:
-      - jaeger
-
   postgres:
-    image: postgres:${POSTGRES_TAG}
+    image: postgres:${POSTGRES_TAG:-latest}
     container_name: postgres
     restart: unless-stopped
     environment:
@@ -92,9 +72,31 @@ services:
           cpus: '2'
           memory: '4G'
 
+  # Observability
+  # OpenTelemetry Collector
+  otel-collector:
+    image: otel/opentelemetry-collector:${OTEL_COLLECTOR_TAG:-latest}
+    container_name: otel-collector
+    restart: unless-stopped
+    volumes:
+      - ./configs/otlp-collector/otel-collector.yaml:/etc/otel-collector.yaml
+    command: [ "--config=/etc/otel-collector.yaml" ]
+    ports:
+      - "4317:4317"    # OTLP gRPC receiver
+      #- "4318:4318"   # OTLP http receiver
+      #- "8888:8888"   # Prometheus metrics exposed by the collector
+      - "8889:8889"    # Prometheus exporter metrics
+      #- "1888:1888"   # pprof extension
+      #- "13133:13133" # health_check extension
+      #- "55679:55679" # zpages extension
+    networks:
+      - internal-network
+    depends_on:
+      - jaeger
+
   # Prometheus postgres exporter
   postgres-exporter:
-    image: prometheuscommunity/postgres-exporter:${PG_EXPORTER_TAG}
+    image: prometheuscommunity/postgres-exporter:${PG_EXPORTER_TAG:-latest}
     container_name: postgres-exporter
     restart: unless-stopped
     environment:
@@ -117,7 +119,7 @@ services:
 
   # Prometheus
   prometheus:
-    image: prom/prometheus:${PROMETHEUS_TAG}
+    image: prom/prometheus:${PROMETHEUS_TAG:-latest}
     container_name: prometheus
     restart: unless-stopped
     volumes:
@@ -138,7 +140,7 @@ services:
 
   # Jaeger
   jaeger:
-    image: jaegertracing/all-in-one:${JAEGER_TAG}
+    image: jaegertracing/all-in-one:${JAEGER_TAG:-latest}
     container_name: jaeger
     restart: unless-stopped
     environment:
@@ -151,7 +153,7 @@ services:
 
   # Grafana
   grafana:
-    image: grafana/grafana:${GRAFANA_TAG}
+    image: grafana/grafana:${GRAFANA_TAG:-latest}
     container_name: grafana
     restart: unless-stopped
     volumes:

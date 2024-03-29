@@ -2,11 +2,9 @@
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore"/>
     <PackageReference Include="Grpc.AspNetCore.Server.Reflection"/>
-
     <PackageReference Include="Dapper"/>
-    <PackageReference Include="Npgsql"/>
+    <PackageReference Include="Npgsql.DependencyInjection"/>
     <PackageReference Include="Npgsql.OpenTelemetry"/>
-
     <PackageReference Include="OpenTelemetry.Extensions"/>
     <PackageReference Include="OpenTelemetry.Extensions.Hosting"/>
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore"/>

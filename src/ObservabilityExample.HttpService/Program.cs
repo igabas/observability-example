@@ -5,10 +5,10 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-var otelExporterEndpoint = new Uri(Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT") !);
 var applicationName = Environment.GetEnvironmentVariable("APPLICATION_NAME") ?? "http-service";
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddControllers();
 builder.Services.AddExternalServices(builder.Configuration);
@@ -26,7 +26,7 @@ builder.Services.AddSingleton(new ObservationService(applicationName));
 builder.Services
     .AddOpenTelemetry()
     .ConfigureResource(o =>
-        o.AddService(applicationName, serviceVersion :ObservationService.ApplicationVersion)
+        o.AddService(applicationName, serviceVersion: ObservationService.ApplicationVersion)
     )
     // add tracing
     .WithTracing(b => b
@@ -34,7 +34,7 @@ builder.Services
         .SetSampler(new AlwaysOnSampler())
         .AddAspNetCoreInstrumentation()
         //.AddConsoleExporter()
-        .AddOtlpExporter(o => o.Endpoint = otelExporterEndpoint)
+        .AddOtlpExporter()
     )
     // add metrics
     .WithMetrics(b => b
@@ -43,7 +43,7 @@ builder.Services
         .AddProcessInstrumentation()
         .AddRuntimeInstrumentation()
         //.AddConsoleExporter()
-        .AddOtlpExporter(o => o.Endpoint = otelExporterEndpoint)
+        .AddOtlpExporter()
     );
 
 // logging
@@ -54,7 +54,7 @@ builder.Logging
         var rb = ResourceBuilder.CreateDefault()
             .AddService(
                 applicationName,
-                serviceVersion :ObservationService.ApplicationVersion);
+                serviceVersion: ObservationService.ApplicationVersion);
 
         options.SetResourceBuilder(rb);
 
@@ -64,7 +64,7 @@ builder.Logging
 
         options.AttachLogsToActivityEvent();
 
-        options.AddOtlpExporter(o => o.Endpoint = otelExporterEndpoint);
+        options.AddOtlpExporter();
     })
     .AddConsole();
 
