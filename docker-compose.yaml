@@ -1,6 +1,8 @@
 version: '3.9'
 name: observability-example
 
+# TODO split by files
+
 services:
   # Services
   http-service:
@@ -71,6 +73,68 @@ services:
         limits:
           cpus: '2'
           memory: '4G'
+
+  # kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:${KAFKA_TAG:-latest}
+    container_name: zookeeper
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: '2181'
+#    ports:
+#      - "22181:2181"
+    networks:
+      - internal-network
+
+  kafka:
+    image: confluentinc/cp-kafka:${KAFKA_TAG:-latest}
+    container_name: kafka
+    restart: unless-stopped
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:9092"
+    networks:
+      - internal-network
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:${KAFKA_TAG:-latest}
+    container_name: schema-registry
+    restart: unless-stopped
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'PLAINTEXT://kafka:9092'
+      SCHEMA_REGISTRY_HOST_NAME: 'schema-registry'
+      SCHEMA_REGISTRY_LISTENERS: 'http://0.0.0.0:8085'
+    depends_on:
+      - kafka
+
+  akhq:
+    image: tchiotludo/akhq:${AKHQ_TAG:-latest}
+    container_name: akhq
+    restart: unless-stopped
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            docker-kafka-server:
+              properties:
+                bootstrap.servers: "kafka:9092"
+              schema-registry:
+                url: "http://schema-registry:8085"
+    ports:
+      - "8099:8080"
+    networks:
+      - internal-network
+    depends_on:
+      - kafka
+      - schema-registry
 
   # Observability
   # OpenTelemetry Collector

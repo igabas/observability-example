@@ -14,21 +14,25 @@ Run project services use command:
 ```shell
 docker compose up -d
 ```
+
 or
+
 ```shell
 docker-compose up -d --force-recreate --no-deps --build http-service grpc-service  
 ```
 
-| service           | url / port                                    | notes                                    | 
-|-------------------|-----------------------------------------------|------------------------------------------| 
-| http-service      | [swager](http://localhost:8081/swagger)       |                                          | 
-| grpc-service      | [grpc reflection](http://localhost:8092)      |                                          |  
-| otel-collector    | [metrics path](http://localhost:8889/metrics) |                                          |  
-| postgreSQL        | port: 6432;                                   | setup via [.env](.//.env) file           |   
-| postgres-exporter | [metrics path](http://localhost:9187/metrics) |                                          |     
-| Jaeger            | [Jaeger UI](http://localhost:16686/)          |                                          |      
-| Grafana           | [Grafana UI](http://localhost:3000/)          | user/pass setup via [.env](.//.env) file |       
-| Prometheus        | [Prometheus UI](http://localhost:9090/)       |                                          |        
+## Service`s addresses
+
+| service           | url / port                                     | notes                                    | 
+|-------------------|------------------------------------------------|------------------------------------------| 
+| http-service      | [swager](http://localhost:8081/swagger)        |                                          | 
+| grpc-service      | [grpc reflection](http://localhost:8092)       |                                          |  
+| otel-collector    | [metrics path](http://localhost:8889/metrics)  |                                          |  
+| postgreSQL        | port: 6432;                                    | setup via [.env](.//.env) file           |   
+| postgres-exporter | [metrics path](http://localhost:9187/metrics)  |                                          |     
+| Jaeger            | [Jaeger UI](http://localhost:16686/)           |                                          |      
+| Grafana           | [Grafana UI](http://localhost:3000/dashboards) | user/pass setup via [.env](.//.env) file |       
+| Prometheus        | [Prometheus UI](http://localhost:9090/)        |                                          |        
 
 ## Troubleshooting 🧐
 

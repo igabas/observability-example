@@ -56,12 +56,15 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{8874EEA0-3EC9-44BA-802D-53AE7B26E7F6}"
 	ProjectSection(SolutionItems) = preProject
 		configs\postgres\scripts\0001-add-extensions-to-template-db.sh = configs\postgres\scripts\0001-add-extensions-to-template-db.sh
+		configs\postgres\scripts\0002-create-example-db-with-user.sh = configs\postgres\scripts\0002-create-example-db-with-user.sh
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "postgres-exporter", "postgres-exporter", "{4F400417-4EAE-4FCF-89E9-520376E314F1}"
 	ProjectSection(SolutionItems) = preProject
 		configs\postgres-exporter\additional-queries.yaml = configs\postgres-exporter\additional-queries.yaml
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{1B28AA5F-BB41-4266-AD1B-49ADBA047359}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +83,7 @@ Global
 		{8ED13754-73C9-4847-830E-3FF2AF716987} = {C4B980BD-75DB-4625-8744-5481A083DD4B}
 		{8874EEA0-3EC9-44BA-802D-53AE7B26E7F6} = {8ED13754-73C9-4847-830E-3FF2AF716987}
 		{4F400417-4EAE-4FCF-89E9-520376E314F1} = {C4B980BD-75DB-4625-8744-5481A083DD4B}
+		{1B28AA5F-BB41-4266-AD1B-49ADBA047359} = {521A0BE6-9BF8-4A96-8329-A132512E3385}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{715704B9-733F-4475-8BE0-5700D1BBED24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

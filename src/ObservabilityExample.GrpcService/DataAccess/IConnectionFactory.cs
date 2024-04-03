@@ -8,19 +8,11 @@ public interface IConnectionFactory
     public Task<DbConnection> CreateConnection(CancellationToken token);
 }
 
-public class PostgresConnectionFactory : IConnectionFactory
+public class PostgresConnectionFactory(NpgsqlDataSource dataSource) : IConnectionFactory
 {
-    private readonly NpgsqlDataSource _dataSource;
-
-    public PostgresConnectionFactory(NpgsqlDataSource dataSource)
-    {
-        _dataSource = dataSource;
-    }
-
-
     public Task<DbConnection> CreateConnection(CancellationToken token)
     {
-        var connection = _dataSource.CreateConnection();
+        var connection = dataSource.CreateConnection();
         return Task.FromResult<DbConnection>(connection);
     }
 }

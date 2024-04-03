@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Npgsql;
 using ObservabilityExample.GrpcService.DataAccess;
 using ObservabilityExample.GrpcService.GrpcControllers;
+using ObservabilityExample.GrpcService.HostedServices;
 using ObservabilityExample.GrpcService.Services;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Resources;
@@ -40,7 +41,7 @@ builder.Services.AddNpgsqlDataSource(builder.Configuration.GetConnectionString("
     op.Name = "ExampleDb";
     // todo register mappings types/enum
 });
-
+builder.Services.AddHostedService<MigrationHostedServices>();
 builder.Services.AddTransient<IConnectionFactory, PostgresConnectionFactory>();
 
 builder.Services.AddSingleton(new ObservationService(applicationName));
@@ -92,10 +93,13 @@ builder.Logging
     })
     .AddConsole();
 
+
 var app = builder.Build();
+
 
 app.MapGrpcService<GreeterGrpcController>();
 // add grpc reflection
 app.MapGrpcReflectionService();
+
 
 app.Run();
