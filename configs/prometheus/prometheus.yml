@@ -39,3 +39,10 @@ scrape_configs:
       - targets: [ 'postgres-exporter:9187' ]
         labels:
           alias: postgres
+
+  - job_name: 'kafka'
+    scrape_interval: 5s
+    static_configs:
+      - targets: [ 'kafka-exporter:9308' ]
+        labels:
+          alias: kafka

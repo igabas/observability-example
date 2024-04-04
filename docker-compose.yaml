@@ -33,8 +33,9 @@ services:
       ASPNETCORE_HTTP_PORT: 8080
       ASPNETCORE_GRPC_PORT: 8084
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4317"
-      # todo from secrets or vault
+      # TODO from secrets or vault
       ConnectionStrings__Example: "Host=postgres;Port=5432;Database=example;Username=example;Password=example"
+      ConnectionStrings__Kafka: "kafka:9092"
     ports:
       - "8091:8080" # HTTP PORT
       - "8092:8084" # GRPC PORT
@@ -51,7 +52,7 @@ services:
       POSTGRES_PASSWORD: ${PG_ROOT_USER_PWD}
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
       - ./configs/postgres/postgresql.conf:/etc/postgresql.conf:ro
       - ./configs/postgres/scripts:/docker-entrypoint-initdb.d
     command:
@@ -81,8 +82,13 @@ services:
     restart: unless-stopped
     environment:
       ZOOKEEPER_CLIENT_PORT: '2181'
-#    ports:
-#      - "22181:2181"
+      ZOOKEEPER_ADMIN_ENABLE_SERVER: 'false'
+      ZOOKEEPER_LOG4J_ROOT_LOGLEVEL: 'WARN'
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-log:/var/lib/zookeeper/log
+    #    ports:
+    #      - "22181:2181"
     networks:
       - internal-network
 
@@ -91,12 +97,18 @@ services:
     container_name: kafka
     restart: unless-stopped
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      # see https://github.com/grumpy-docker/docker-kafka/blob/master/README.md
+      KAFKA_BROKER_ID: '0'
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_COMPRESSION_TYPE: 'gzip'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: '1'
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: '1'
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: '1'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:9092'
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      KAFKA_LOG4J_ROOT_LOGLEVEL: 'WARN'
+    volumes:
+      - kafka-data:/var/lib/kafka/data:Z
     depends_on:
       - zookeeper
     ports:
@@ -112,8 +124,11 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'PLAINTEXT://kafka:9092'
       SCHEMA_REGISTRY_HOST_NAME: 'schema-registry'
       SCHEMA_REGISTRY_LISTENERS: 'http://0.0.0.0:8085'
+      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: 'WARN'
     depends_on:
       - kafka
+    networks:
+      - internal-network
 
   akhq:
     image: tchiotludo/akhq:${AKHQ_TAG:-latest}
@@ -135,6 +150,21 @@ services:
     depends_on:
       - kafka
       - schema-registry
+
+  kafka-exporter:
+    image: danielqsj/kafka-exporter:${KAFKA_EXPORTER_TAG:-latest}
+    container_name: kafka-exporter
+    command:
+      - "--kafka.server=kafka:9092"
+      - "--zookeeper.server=zookeeper:2181"
+      - "--use.consumelag.zookeeper"
+    ports:
+      - "9308:9308"
+    depends_on:
+      - kafka
+      - zookeeper
+    networks:
+      - internal-network
 
   # Observability
   # OpenTelemetry Collector
@@ -188,7 +218,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./configs/prometheus/:/etc/prometheus/
-      - prometheus_data:/prometheus
+      - prometheus-data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -221,7 +251,7 @@ services:
     container_name: grafana
     restart: unless-stopped
     volumes:
-      - grafana_data:/var/lib/grafana
+      - grafana-data:/var/lib/grafana
       - ./configs/grafana/provisioning:/etc/grafana/provisioning
     environment:
       - GF_SECURITY_ADMIN_USER=${GR_USER_NAME}
@@ -235,9 +265,12 @@ services:
       - prometheus
 
 volumes:
-  postgres_data: { }
-  prometheus_data: { }
-  grafana_data: { }
+  postgres-data: { }
+  prometheus-data: { }
+  grafana-data: { }
+  zookeeper-data: { }
+  zookeeper-log: { }
+  kafka-data: { }
 
 networks:
   internal-network: { }

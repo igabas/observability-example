@@ -30,9 +30,12 @@ docker-compose up -d --force-recreate --no-deps --build http-service grpc-servic
 | otel-collector    | [metrics path](http://localhost:8889/metrics)  |                                          |  
 | postgreSQL        | port: 6432;                                    | setup via [.env](.//.env) file           |   
 | postgres-exporter | [metrics path](http://localhost:9187/metrics)  |                                          |     
-| Jaeger            | [Jaeger UI](http://localhost:16686/)           |                                          |      
+| Jaeger            | [Jaeger UI](http://localhost:16686)            |                                          |      
 | Grafana           | [Grafana UI](http://localhost:3000/dashboards) | user/pass setup via [.env](.//.env) file |       
-| Prometheus        | [Prometheus UI](http://localhost:9090/)        |                                          |        
+| Prometheus        | [Prometheus UI](http://localhost:9090)         |                                          |        
+| kafka             | [Kafka](http://localhost:39092)                |                                          |
+| akhq              | [Kafka UI](http://localhost:8099)              |                                          |
+| kafka-exporter    | [metrics path](http://localhost:9308/metrics)  |                                          |
 
 ## Troubleshooting 🧐
 
