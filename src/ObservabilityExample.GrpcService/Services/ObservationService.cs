@@ -2,6 +2,7 @@ using System.Diagnostics;
 
 namespace ObservabilityExample.GrpcService.Services;
 
+// TODO to lib
 public class ObservationService : IDisposable
 {
     public string ApplicationName { get; init; }

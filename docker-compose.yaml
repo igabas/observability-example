@@ -154,6 +154,7 @@ services:
   kafka-exporter:
     image: danielqsj/kafka-exporter:${KAFKA_EXPORTER_TAG:-latest}
     container_name: kafka-exporter
+    restart: unless-stopped
     command:
       - "--kafka.server=kafka:9092"
       - "--zookeeper.server=zookeeper:2181"

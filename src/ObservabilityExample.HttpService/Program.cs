@@ -33,6 +33,8 @@ builder.Services
         .AddSource(applicationName)
         .SetSampler(new AlwaysOnSampler())
         .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddGrpcClientInstrumentation()
         //.AddConsoleExporter()
         .AddOtlpExporter()
     )
