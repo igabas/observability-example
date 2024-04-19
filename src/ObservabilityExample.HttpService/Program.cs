@@ -8,7 +8,6 @@ using OpenTelemetry.Trace;
 var applicationName = Environment.GetEnvironmentVariable("APPLICATION_NAME") ?? "http-service";
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddControllers();
 builder.Services.AddExternalServices(builder.Configuration);

@@ -4,11 +4,9 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
-      "applicationUrl": "http://localhost:18091",
+      "applicationUrl": "http://localhost:18091;https://localhost:18092",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_HTTP_PORT": "18091",
-        "ASPNETCORE_GRPC_PORT": "18092",
         "APPLICATION_NAME": "grpc-service.local"
       }
     }
