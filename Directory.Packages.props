@@ -5,15 +5,15 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- API -->
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.3" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.4" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <!-- GRPC -->
-    <PackageVersion Include="Google.Protobuf" Version="3.26.0" />
-    <PackageVersion Include="Grpc.AspNetCore" Version="2.61.0" />
-    <PackageVersion Include="Grpc.AspNetCore.Server.Reflection" Version="2.61.0" />
-    <PackageVersion Include="Grpc.AspNetCore.Server.ClientFactory" Version="2.61.0" />
-    <PackageVersion Include="Grpc.Net.Client" Version="2.61.0" />
-    <PackageVersion Include="Grpc.Net.ClientFactory" Version="2.61.0" />
+    <PackageVersion Include="Google.Protobuf" Version="3.26.1" />
+    <PackageVersion Include="Grpc.AspNetCore" Version="2.62.0" />
+    <PackageVersion Include="Grpc.AspNetCore.Server.Reflection" Version="2.62.0" />
+    <PackageVersion Include="Grpc.AspNetCore.Server.ClientFactory" Version="2.62.0" />
+    <PackageVersion Include="Grpc.Net.Client" Version="2.62.0" />
+    <PackageVersion Include="Grpc.Net.ClientFactory" Version="2.62.0" />
     <PackageVersion Include="Grpc.Tools" Version="2.62.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -25,13 +25,13 @@
     <PackageVersion Include="Evolve" Version="3.2.0" />
     <!-- OpenTelemetry -->
     <PackageVersion Include="OpenTelemetry.Extensions" Version="1.0.0-beta.4" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.7.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.7.1" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.8.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.8.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.GrpcNetClient" Version="1.7.0-beta.1" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.7.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.8.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Process" Version="0.5.0-beta.4" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.7.0" />
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.7.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.8.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.8.1" />
     <!--<PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.7.0"/>-->
   </ItemGroup>
 </Project>
