@@ -10,5 +10,6 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisLevel>5</AnalysisLevel>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <!--<NoWarn>NU1103;NU1604</NoWarn>-->
   </PropertyGroup>
 </Project>
